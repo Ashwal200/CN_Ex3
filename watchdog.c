@@ -46,18 +46,18 @@ int main(int argc, char *argv[])
 
     // "sockaddr_in" is the "derived" from sockaddr structure
     // used for IPv4 communication.
-    struct sockaddr_in receiver_address;
-    memset(&receiver_address, 0, sizeof(receiver_address));
+    struct sockaddr_in ping_address;
+    memset(&ping_address, 0, sizeof(ping_address));
     // This field contains the address family, which is always AF_INET when we use TCP.
-    receiver_address.sin_family = AF_INET;
+    ping_address.sin_family = AF_INET;
     // Any IP at this port (Address to accept any incoming messages).
-    receiver_address.sin_addr.s_addr = INADDR_ANY;
+    ping_address.sin_addr.s_addr = INADDR_ANY;
     // It refers to a 16-bit port number on which the Receiver will listen to the connection requests by the clients.
     // Function htons convert (5001 = 0x89 0x13) little endian => (0x13 0x89) network endian (big endian).
-    receiver_address.sin_port = htons(SERVER_PORT);
+    ping_address.sin_port = htons(SERVER_PORT);
 
     // Bind the socket to the port with any IP at this port.
-    int bind_result = bind(listening_socket, (struct sockaddr *)&receiver_address, sizeof(receiver_address));
+    int bind_result = bind(listening_socket, (struct sockaddr *)&ping_address, sizeof(ping_address));
    // If could not bind the socket to the port.
     if (bind_result == -1)
     {

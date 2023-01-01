@@ -43,7 +43,33 @@ unsigned short calculate_checksum(unsigned short *paddress, int len);
 //  still be sent, but do not expect to see ICMP_ECHO_REPLY in most such cases
 //  since anti-spoofing is wide-spread.
 
+// Compute checksum (RFC 1071).
+unsigned short calculate_checksum(unsigned short *paddress, int len)
+{
+    int nleft = len;
+    int sum = 0;
+    unsigned short *w = paddress;
+    unsigned short answer = 0;
 
+    while (nleft > 1)
+    {
+        sum += *w++;
+        nleft -= 2;
+    }
+
+    if (nleft == 1)
+    {
+        *((unsigned char *)&answer) = *((unsigned char *)w);
+        sum += answer;
+    }
+
+    // add back carry outs from top 16 bits to low 16 bits
+    sum = (sum >> 16) + (sum & 0xffff); // add hi 16 to low 16
+    sum += (sum >> 16);                 // add carry
+    answer = ~sum;                      // truncate to 16 bits
+
+    return answer;
+}
 int check_number(char *str) {
    while (*str) {
       if(!isdigit(*str)){ //if the character is not a number, return
@@ -161,7 +187,8 @@ int main(int argc, char *argv[])
 
     struct timeval start, end;
     gettimeofday(&start, 0);
-  
+    
+    sleep(0.5);
     // Send the packet using sendto() for sending datagrams.
     int bytes_sent = sendto(sock, packet, ICMP_HDRLEN + datalen, 0, (struct sockaddr *)&dest_in, sizeof(dest_in));
     if (bytes_sent == -1)
@@ -206,38 +233,4 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-// Compute checksum (RFC 1071).
-unsigned short calculate_checksum(unsigned short *paddress, int len)
-{
-    int nleft = len;
-    int sum = 0;
-    unsigned short *w = paddress;
-    unsigned short answer = 0;
-
-    while (nleft > 1)
-    {
-        sum += *w++;
-        nleft -= 2;
-    }
-
-    if (nleft == 1)
-    {
-        *((unsigned char *)&answer) = *((unsigned char *)w);
-        sum += answer;
-    }
-
-    // add back carry outs from top 16 bits to low 16 bits
-    sum = (sum >> 16) + (sum & 0xffff); // add hi 16 to low 16
-    sum += (sum >> 16);                 // add carry
-    answer = ~sum;                      // truncate to 16 bits
-
-    return answer;
-}
-
-
-
-
-
-
 
