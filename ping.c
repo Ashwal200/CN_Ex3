@@ -184,11 +184,11 @@ int main(int argc, char *argv[])
     memcpy((packet), &icmphdr, ICMP_HDRLEN);
 
 
-
+  
+    sleep(0.5);
     struct timeval start, end;
     gettimeofday(&start, 0);
-    
-    sleep(0.5);
+  
     // Send the packet using sendto() for sending datagrams.
     int bytes_sent = sendto(sock, packet, ICMP_HDRLEN + datalen, 0, (struct sockaddr *)&dest_in, sizeof(dest_in));
     if (bytes_sent == -1)
