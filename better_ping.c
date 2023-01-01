@@ -134,7 +134,7 @@ int main(int argc, char *argv[]){
     char *args[2];
     // compiled watchdog.c by makefile
     args[0] = "./watchdog";
-    args[1] = NULL;
+    args[1] = argv[1];
     int status;
     int pid = fork();
     if (pid == 0)
@@ -228,7 +228,7 @@ int main(int argc, char *argv[]){
         }
 
         //if NEW_PING don't receive a stop signal -> send to watch dog that NEW_PING ready to start sending ping
-        int start_p = 1;
+        int start_p = 0;
         int send_start = send(watchdog_socket, &start_p, sizeof(int), 0);
         if (send_start == -1) printf("send() failed with error code : %d", errno);
         else if (send_start == 0) printf("peer has closed the TCP connection prior to send().\n");
@@ -270,10 +270,6 @@ int main(int argc, char *argv[]){
     // Close the raw socket descriptor.
     close(sock);
    
-   
-    printf("server <%s> cannot be reached.\n", argv[1]);
-
-
 
     wait(&status);// waiting for child to finish before exiting
     printf("child exit status is: %d\n", status);

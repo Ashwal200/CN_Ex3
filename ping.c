@@ -43,9 +43,7 @@ unsigned short calculate_checksum(unsigned short *paddress, int len);
 //  still be sent, but do not expect to see ICMP_ECHO_REPLY in most such cases
 //  since anti-spoofing is wide-spread.
 
-#define SOURCE_IP "10.0.2.15"
-// i.e the gateway or ping to google.com for their ip-address
-#define DESTINATION_IP "8.8.8.8"
+
 int check_number(char *str) {
    while (*str) {
       if(!isdigit(*str)){ //if the character is not a number, return

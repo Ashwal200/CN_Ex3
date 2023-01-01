@@ -17,7 +17,7 @@
 
 int gettimeofday();
 
-int main()
+int main(int argc, char *argv[])
 {   
       // Create a TCP Connection between the sender and receiver. As known, it doesn’t create a
     // whole new socket with TCP connection. Its just should establish connection with the socket
@@ -116,11 +116,11 @@ int main()
 //for calculate the time
     struct timeval start, end;
     float timer = 0;
-
+   
     sleep(1);
     //checking if watchdog receive something from ping if yes then update the start time if no then the time will stop updating and then second>10 -> shut down
     while (timer <= 10){
-        int ping_start = 1;
+        int ping_start = 0;
         int receive= recv(socket_ping, &ping_start, sizeof(int), 0);
         if(receive>0){
             gettimeofday(&start, 0);
@@ -129,15 +129,9 @@ int main()
         timer = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0f;
     }
 
+    printf("server <%s> cannot be reached.\n", argv[1]);
 
-    //send signal that make the new_ping to stop
-    int ping_stop = 1;
-    send(socket_ping, &ping_stop, sizeof(int), 0);
-
-    close(socket_ping);
-    //close the clientSocket
-    close(listening_socket);
-    //listeningSocket
+    kill(getppid() , SIGKILL);
     return 0;
     
 
