@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdbool.h>
-#include <fcntl.h>
+
 // ICMP header len for echo req
 #define ICMP_HDRLEN 8 
 // watchdog port by request
@@ -185,9 +185,6 @@ int main(int argc, char *argv[]){
     // The port is irrelant for Networking and therefore was zeroed.
     dest_in.sin_addr.s_addr = inet_addr(argv[1]);
 
-    //Change the socket into non-blocking state
-    fcntl(watchdog_socket, F_SETFL, O_NONBLOCK);
-
     //for calculate the time
     struct timeval start, end;
     //seq counter
@@ -228,7 +225,7 @@ int main(int argc, char *argv[]){
         }
 
         //if NEW_PING don't receive a stop signal -> send to watch dog that NEW_PING ready to start sending ping
-        int start_p = 0;
+        int start_p = 282;// Yuval Ben Yaakov in gematria.
         int send_start = send(watchdog_socket, &start_p, sizeof(int), 0);
         if (send_start == -1) printf("send() failed with error code : %d", errno);
         else if (send_start == 0) printf("peer has closed the TCP connection prior to send().\n");
