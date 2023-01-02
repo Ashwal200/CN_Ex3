@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     sender_address_len = sizeof(sender_address);
  
    
-// Accept the connection from the server.
+    // Accept the connection from the server.
     int socket_ping = accept(listening_socket, (struct sockaddr *)&sender_address, &sender_address_len);
     if (socket_ping == -1)
     {
@@ -113,13 +113,13 @@ int main(int argc, char *argv[])
     
     fcntl(socket_ping, F_SETFL, O_NONBLOCK);
 
-//for calculate the time
+    // Struct time.
     struct timeval start, end;
     float timer = 0;
    
     sleep(1);
-    //checking if watchdog receive something from ping if yes then update the start time if no then the time will stop updating and then second>10 -> shut down
-    while (timer <= 10){
+    // If better ping start to ping yet. 
+      while (timer <= 10){
         int ping_start = 0;
         int receive= recv(socket_ping, &ping_start, sizeof(int), 0);
         if(receive>0){
@@ -129,8 +129,9 @@ int main(int argc, char *argv[])
         timer = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0f;
     }
 
-    printf("server <%s> cannot be reached.\n", argv[1]);
 
+    printf("server <%s> cannot be reached.\n", argv[1]);
+    // KILL the progress.
     kill(getppid() , SIGKILL);
     return 0;
     

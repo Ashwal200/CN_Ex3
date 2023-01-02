@@ -132,7 +132,7 @@ int main(int argc, char *argv[]){
     // run 2 programs using fork + exec
     // command: make clean && make all && ./partb
     char *args[2];
-    // compiled watchdog.c by makefile
+    // Compiled watchdog.c by makefile
     args[0] = "./watchdog";
     args[1] = argv[1];
     int status;
@@ -141,10 +141,10 @@ int main(int argc, char *argv[]){
     {
         printf("in child \n");
         execvp(args[0], args);
-        // alarm(10);
+        
     }
 
-    //open a socket for watchdog
+    // Open a socket for watchdog
     int watchdog_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (watchdog_socket == -1) {
         printf("Could not create socket : %d\n", errno);
@@ -172,7 +172,7 @@ int main(int argc, char *argv[]){
         return -1;
     } else printf("connected to watchdog\n");
 
-    //open socket for ping
+    // Open socket for ping
     int sock = -1;
     if ((sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) == -1) {
         fprintf(stderr, "socket() failed with error: %d", errno);
@@ -185,9 +185,8 @@ int main(int argc, char *argv[]){
     // The port is irrelant for Networking and therefore was zeroed.
     dest_in.sin_addr.s_addr = inet_addr(argv[1]);
 
-    //for calculate the time
+    // Struct for time.
     struct timeval start, end;
-    //seq counter
     int  icmp_seq_counter = 0;
     while (1) {
 
@@ -218,19 +217,19 @@ int main(int argc, char *argv[]){
         memcpy((packet), &icmphdr, ICMP_HDRLEN);
 
 
-        //if NEW_PING don't receive a stop signal -> send to watch dog that NEW_PING ready to start sending ping
-        int start_p = 282;// Yuval Ben Yaakov in gematria -- in HEX = 011a.
+        // Send start message to the watchdog.
+        int start_p = 282; // Yuval Ben Yaakov in gematria -- in HEX = 011a.
         int send_start = send(watchdog_socket, &start_p, sizeof(int), 0);
         if (send_start == -1) printf("send() failed with error code : %d", errno);
         else if (send_start == 0) printf("peer has closed the TCP connection prior to send().\n");
         
         gettimeofday(&start, 0);
         int time_pass =4*(icmp_seq_counter+1);
-        //for test - check if the watchdog make the NEW_PING to shut down
+        // We check if the program work , so we wait different time until we passed the limit. 
         sleep(time_pass);
 
 
-        // Send the packet using sendto() for sending datagrams.
+        // Send ping to the IP in argv[1].
         int bytes_sent = sendto(sock, packet, ICMP_HDRLEN + datalen, 0, (struct sockaddr *) &dest_in, sizeof(dest_in));
         if (bytes_sent == -1) {
             fprintf(stderr, "sendto() failed with error: %d", errno);
@@ -252,7 +251,7 @@ int main(int argc, char *argv[]){
 
         gettimeofday(&end, 0);
 
-        //calculate the time
+        // Calculate the time from sending to receiving.
         float milliseconds = (end.tv_sec - start.tv_sec) * 1000.0f + (end.tv_usec - start.tv_usec) / 1000.0f;
         printf("%ld bytes from %s: icmp_seq=%d ttl=10 time=%f ms)\n", bytes_received, argv[1], icmp_seq_counter++,
                milliseconds);
@@ -262,7 +261,7 @@ int main(int argc, char *argv[]){
     close(sock);
    
 
-    wait(&status);// waiting for child to finish before exiting
+    wait(&status);// Waiting for child to finish before exiting
     printf("child exit status is: %d\n", status);
     return 0;
 }

@@ -139,7 +139,9 @@ int main(int argc, char *argv[])
         fprintf(stderr, "To create a raw socket, the process needs to be run by Admin/root user.\n\n");
         return -1;
     }
+    // Counter to the seq.
     int icmp_seq1 = 0;
+    // Adding loop that ping allways.
     while (1)
     {
     
