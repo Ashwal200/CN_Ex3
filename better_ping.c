@@ -217,15 +217,9 @@ int main(int argc, char *argv[]){
         // Calculate the ICMP header checksum
         memcpy((packet), &icmphdr, ICMP_HDRLEN);
 
-        //if NEW_PING receive a stop signal -> break out and finish the program
-        int failed = 1;
-        int receive = recv(watchdog_socket, &failed, sizeof(int), 0);//receiving from new_ping the sign
-        if(receive > 0){
-            break;
-        }
 
         //if NEW_PING don't receive a stop signal -> send to watch dog that NEW_PING ready to start sending ping
-        int start_p = 282;// Yuval Ben Yaakov in gematria.
+        int start_p = 282;// Yuval Ben Yaakov in gematria -- in HEX = 011a.
         int send_start = send(watchdog_socket, &start_p, sizeof(int), 0);
         if (send_start == -1) printf("send() failed with error code : %d", errno);
         else if (send_start == 0) printf("peer has closed the TCP connection prior to send().\n");
